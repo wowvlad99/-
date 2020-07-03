@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode} 
+
+%---enable russian----
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+% PROBABILITY SYMBOLS
+\newcommand*\PROB\Pr 
+\DeclareMathOperator*{\EXPECT}{\mathbb{E}}
+
+
+% Sets, Rngs, ets 
+\newcommand{\N}{{{\mathbb N}}}
+\newcommand{\Z}{{{\mathbb Z}}}
+\newcommand{\R}{{{\mathbb R}}}
+\newcommand{\Zp}{\ints_p} % Integers modulo p
+\newcommand{\Zq}{\ints_q} % Integers modulo q
+\newcommand{\Zn}{\ints_N} % Integers modulo N
+
+% Landau 
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand*{\OLandau}{\bigO}
+\newcommand*{\WLandau}{\Omega}
+\newcommand*{\xOLandau}{\widetilde{\OLandau}}
+\newcommand*{\xWLandau}{\widetilde{\WLandau}}
+\newcommand*{\TLandau}{\Theta}
+\newcommand*{\xTLandau}{\widetilde{\TLandau}}
+\newcommand{\smallo}{o} %technically, an omicron
+\newcommand{\softO}{\widetilde{\bigO}}
+\newcommand{\wLandau}{\omega}
+\newcommand{\negl}{\mathrm{negl}} 
+
+% Misc
+\newcommand{\eps}{\varepsilon}
+\newcommand{\inprod}[1]{\left\langle #1 \right\rangle}
+
+ 
+\newcommand{\handout}[5]{
+  \noindent
+  \begin{center}
+  \framebox{
+    \vbox{
+      \hbox to 5.78in { {\bf Научно-исследовательская практика} \hfill #2 }
+      \vspace{4mm}
+      \hbox to 5.78in { {\Large \hfill #5  \hfill} }
+      \vspace{2mm}
+      \hbox to 5.78in { {\em #3 \hfill #4} }
+    }
+  }
+  \end{center}
+  \vspace*{4mm}
+}
+
+\newcommand{\lecture}[4]{\handout{#1}{#2}{#3}{#4}{Бинарный алгоритм нахождения НОД #1}}
+
+\newtheorem{theorem}{Теорема}
+\newtheorem{lemma}{Лемма}
+\newtheorem{definition}{Определение}
+\newtheorem{corollary}{Следствие}
+\newtheorem{fact}{Факт}
+
+% 1-inch margins
+\topmargin 0pt
+\advance \topmargin by -\headheight
+\advance \topmargin by -\headsep
+\textheight 8.9in
+\oddsidemargin 0pt
+\evensidemargin \oddsidemargin
+\marginparwidth 0.5in
+\textwidth 6.5in
+
+\parindent 0in
+\parskip 1.5ex
+
+\begin{document}
+
+\lecture{}{Лето 2020}{}{Завертанов Владислав}
+
+\section{Описание}
+\textbf{Бинарный алгоритм нахождения НОД} —метод нахождения наибольшего общего делителя двух целых чисел. Данный алгоритм быстрее обычного алгоритма Евклида, т.к. вместо медленных операций деления и умножения используются сдвиги. Возможно, алгоритм был известен еще в Китае 1-го века, но опубликован был лишь в 1967 году израильским физиком и программистом Джозефом Стайном.Он основан на использовании  свойств НОД,а именно НОД$(2m, 2n)$ = 2 НОД$(m, n)$, НОД$(2m, 2n+1)$ = НОД$(m, 2n+1)$, НОД$(-m, n)$ = НОД$(m, n)$.
+
+
+\section{Алгоритм}
+
+\begin{algorithm}[ph]
+	\caption{Бинарный алгоритм Евклида}
+	\label{alg:AlgName}
+	\textbf{Ввод:} a>0, b>0  \\
+	\textbf{Вывод:} (a, b)
+	
+	\begin{algorithmic}[1]
+		
+		\State представить \textbf{a} и \textbf{b} в виде $ a = 2^ia_1 $,$ b = 2^jb_1 $, где $ a_1, b_1 $ - нечетные
+		\State положить $a = a_1, b = b_1$, и найти $ k = min(i, j)$                    
+		\State пока \textbf{a} и \textbf{b} не равны, выполняй: 
+			\State \textbf{if} $a < b$  \textbf{then} поменять $a$ и $b$ местами
+			\State вычислить $c = a - b$ и представить в виде $c = 2^sc_1$, где $c_1$-нечетное
+		           \State положить $a = c_1$   
+		\State \Return $2^ka$
+	\end{algorithmic}
+
+\end{algorithm}
+\clearpage
+
+\section{Анализ}
+
+\subsection{Описание}
+Алгоритм был реализован на \textit{Sage} — системе компьютерной алгебры, покрывающей много областей математики, включая алгебру, комбинаторику, вычислительную математику и матанализ. Вся вычислительная нагрузка приходилась на облачный ресурс Collaborative Calculation and Data Science (Cocalc).
+
+\subsection{Сравнение результатов}
+
+Для проверки корректности реализации алгоритма была использована встроенная в \textit{Sage} функция \textit{gcd(a, b)}. Были зафиксированы результаты работы и среднее время их исполнения.
+
+\begin{center}
+
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{Параметры} & \multicolumn{2}{c|}{Собственная реализация} & \multicolumn{2}{c|}{Sage} \\ \hline
+      a    &      b     &    Результат       &     Время, с      &      Результат     &    Время, с       \\ \hline
+      $321^{245}$     &     $768^{82}$      &     1330...7449678409      &     0.00      &     1330...7449678409      &    0.00       \\ \hline
+       $12304^{24322}$    &     $8246^{15633}$      &     10044358...951726592     &     0.01      &     10044358...951726592     &     0.01      \\ \hline
+       $1230424^{243222}$    &      $824823^{15633}$     &     1      &   0.07        &     1      &        0.06    \\ \hline
+       $123456789^{24322} $    &     $77777777777^{15633}$      &     1     &     0.11      &     1     &     0.09      \\ \hline
+\end{tabular}
+\end{center}
+
+
+\end{document}
